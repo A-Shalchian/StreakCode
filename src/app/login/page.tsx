@@ -1,6 +1,6 @@
 "use client";
 import { signIn } from "next-auth/react";
-import { FaGoogle, FaGithub } from "react-icons/fa";
+import { FaGithub } from "react-icons/fa";
 
 export default function Login() {
   return (
@@ -8,26 +8,26 @@ export default function Login() {
       <div className="max-w-md w-full space-y-8 p-16 bg-white rounded-xl shadow-lg">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
+            Sign in with GitHub
           </h2>
+          <p className="mt-2 text-center text-sm text-gray-600">
+            Connect your GitHub account to track your coding streaks
+          </p>
         </div>
-        <div className="mt-8 space-y-4">
-          <button
-            onClick={() => signIn("google")}
-            className="w-full flex items-center justify-center gap-3 px-4 py-3 
-                border border-gray-300 rounded-md shadow-sm text-sm font-bold text-gray-700 bg-white hover:bg-gray-50 transition-colors cursor-pointer"
-          >
-            <FaGoogle className="text-xl  text-red-500" />
-            Continue with Google
-          </button>
+        <div className="mt-8">
           <button
             onClick={() => signIn("github")}
-            className="w-full flex items-center justify-center gap-3 px-4 py-3 
-                border border-gray-300 rounded-md shadow-sm text-sm font-bold text-gray-700 bg-white hover:bg-gray-50 transition-colors cursor-pointer"
+            className="w-full flex items-center justify-center gap-3 px-4 py-4 
+                border border-gray-300 rounded-md shadow-sm text-base font-bold text-gray-800 bg-white hover:bg-gray-50 transition-colors cursor-pointer"
           >
-            <FaGithub className="text-xl" />
+            <FaGithub className="text-2xl" />
             Continue with GitHub
           </button>
+        </div>
+        <div className="mt-6">
+          <p className="text-center text-xs text-gray-500">
+            CodeStreak requires GitHub access to track your contributions and calculate your coding streak.
+          </p>
         </div>
       </div>
     </div>

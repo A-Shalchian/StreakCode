@@ -63,6 +63,27 @@ export const Navbar: React.FC = () => {
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2">
                   {status === "authenticated" && session?.user ? (
                     <>
+                      <Link
+                        href="/streak"
+                        className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        My Streak
+                      </Link>
+                      <Link
+                        href="/github"
+                        className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        GitHub Settings
+                      </Link>
+                      <Link
+                        href="/contributions"
+                        className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        Contribution Settings
+                      </Link>
                       <button
                         onClick={() => {
                           signOut();

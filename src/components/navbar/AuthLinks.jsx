@@ -19,6 +19,9 @@ export const AuthLinks = () => {
 
   return (
     <ul className="flex flex-col space-y-4 text-2xl  font-semibold">
+      <li className="hover-nav">
+        <Link href="/contributions">Contributions</Link>
+      </li>
       <li className="hover-nav ">
         <span onClick={() => signOut()}>Logout</span>
       </li>

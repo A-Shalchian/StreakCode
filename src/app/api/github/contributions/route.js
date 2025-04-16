@@ -43,28 +43,61 @@ export async function GET() {
       // Get the contributions using the GitHub access token
       const { weeks, totalContributions } = await getContributions(user.githubAccessToken);
 
-      // Correct the date offset issue - GitHub API uses UTC dates, but we're in Eastern Time
-      // Fix the dates in all weeks to account for timezone differences
+      // Get today and yesterday in local timezone
+      const now = new Date();
+      const today = new Date(now);
+      today.setHours(0, 0, 0, 0);
+      
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+      
+      // Format dates for comparison
+      const todayISO = today.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+      const yesterdayISO = yesterday.toISOString().split('T')[0];
+      
+      console.log('Today (local):', todayISO);
+      console.log('Yesterday (local):', yesterdayISO);
+      
+      // Adjust dates in the contribution data (GitHub API uses UTC)
+      // Instead of adding a day to all dates, we'll identify days by their relative position
+      let todayContributionCount = 0;
+      let yesterdayContributionCount = 0;
+      
+      // Map to store dates and their contribution counts
+      const dateMap = new Map();
+      
+      // Process all contribution days
       weeks.forEach(week => {
         week.contributionDays.forEach(day => {
-          // Parse the date
-          const originalDate = new Date(day.date);
+          const contributionDate = new Date(day.date + 'T00:00:00Z'); // Add UTC timezone marker
+          // Convert to local time
+          const localDate = new Date(contributionDate.getTime() + (contributionDate.getTimezoneOffset() * 60000));
+          const localDateISO = localDate.toISOString().split('T')[0];
           
-          // Adjust for timezone - add 1 day to correct the offset
-          const adjustedDate = new Date(originalDate);
-          adjustedDate.setDate(originalDate.getDate() + 1);
+          // Store in our map
+          dateMap.set(localDateISO, {
+            count: day.contributionCount,
+            color: day.color
+          });
           
-          // Update the date in ISO format (YYYY-MM-DD)
-          day.date = adjustedDate.toISOString().split('T')[0];
+          // Update date in the object
+          day.date = localDateISO;
         });
       });
-
-      // Ensure today is included in the contribution data
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const todayISO = today.toISOString().split('T')[0]; // Format as YYYY-MM-DD
       
-      // Check if today is in the data
+      // Check if we have data for today and yesterday
+      if (dateMap.has(todayISO)) {
+        todayContributionCount = dateMap.get(todayISO).count;
+      }
+      
+      if (dateMap.has(yesterdayISO)) {
+        yesterdayContributionCount = dateMap.get(yesterdayISO).count;
+      }
+      
+      console.log('Today contributions:', todayContributionCount);
+      console.log('Yesterday contributions:', yesterdayContributionCount);
+      
+      // Ensure today exists in the data
       let todayIncluded = false;
       let lastWeek = weeks[weeks.length - 1];
       
@@ -79,20 +112,13 @@ export async function GET() {
       if (!todayIncluded) {
         console.log('Today is not in the GitHub data. Adding today:', todayISO);
         
-        // Today's contribution count - you could fetch this from somewhere else if needed
-        const todayContributions = 14; // Example value
-        
+        // Today should have 0 contributions since we haven't contributed yet today
         // Add today to the last week
         lastWeek.contributionDays.push({
           date: todayISO,
-          contributionCount: todayContributions,
-          color: '#216e39' // Dark green for many contributions
+          contributionCount: 0,
+          color: '#ebedf0' // Light color for no contributions
         });
-        
-        // Update total contributions
-        const adjustedTotalContributions = totalContributions + todayContributions;
-        
-        console.log(`Added today with ${todayContributions} contributions. New total: ${adjustedTotalContributions}`);
       }
 
       // Calculate current streak
@@ -111,29 +137,35 @@ export async function GET() {
       // Sort by date (newest first)
       allDays.sort((a, b) => new Date(b.date) - new Date(a.date));
       
-      // Calculate the current streak
+      // Calculate the streak - looking at consecutive days with contributions
+      // working backwards from yesterday (not including today)
       for (let i = 0; i < allDays.length; i++) {
         const day = allDays[i];
-        const contributionDate = new Date(day.date);
+        const date = day.date;
         
-        // Stop counting if we hit a gap of more than one day
-        if (i > 0) {
-          const prevDate = new Date(allDays[i-1].date);
-          const diffDays = Math.floor((prevDate - contributionDate) / (1000 * 60 * 60 * 24));
-          
-          if (diffDays > 1) {
-            break;
-          }
+        // Skip today when calculating the base streak
+        if (date === todayISO) {
+          continue;
         }
         
+        // Count consecutive days with contributions
         if (day.contributionCount > 0) {
           currentStreak++;
         } else {
+          // Stop when we hit a day with no contributions
           break;
         }
       }
       
-      // Calculate max streak
+      // Add today to the streak only if there were contributions today 
+      // and yesterday had contributions (or streak is 0)
+      const hadContributionYesterday = yesterdayContributionCount > 0;
+      
+      if (todayContributionCount > 0 && (hadContributionYesterday || currentStreak === 0)) {
+        currentStreak++;
+      }
+      
+      // Calculate max streak (including all days)
       for (let i = 0; i < allDays.length; i++) {
         if (allDays[i].contributionCount > 0) {
           tempStreak++;
@@ -155,9 +187,11 @@ export async function GET() {
       // Return the contributions data
       return NextResponse.json({
         weeks,
-        totalContributions: todayIncluded ? totalContributions : totalContributions + 14,
+        totalContributions,
         currentStreak,
-        maxStreak
+        maxStreak,
+        todayContributionCount,
+        yesterdayContributionCount
       });
     } catch (error) {
       console.error("GitHub API error:", error);

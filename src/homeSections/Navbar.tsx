@@ -68,22 +68,16 @@ export const Navbar: React.FC = () => {
                         className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                         onClick={() => setShowUserMenu(false)}
                       >
-                        My Streak
+                        GitHub Streak
                       </Link>
                       <Link
                         href="/github"
                         className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                         onClick={() => setShowUserMenu(false)}
                       >
-                        GitHub Settings
+                        GitHub Connection
                       </Link>
-                      <Link
-                        href="/contributions"
-                        className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
-                        onClick={() => setShowUserMenu(false)}
-                      >
-                        Contribution Settings
-                      </Link>
+                      
                       <button
                         onClick={() => {
                           signOut();

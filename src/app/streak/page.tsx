@@ -20,6 +20,8 @@ interface ContributionsData {
   totalContributions: number;
   currentStreak: number;
   maxStreak: number;
+  todayContributionCount: number;
+  yesterdayContributionCount: number;
 }
 
 export default function StreakPage() {
@@ -100,7 +102,11 @@ export default function StreakPage() {
               <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
                 <h2 className="text-xl font-semibold mb-1">Current Streak</h2>
                 <p className="text-4xl font-bold text-emerald-500">{contributions.currentStreak} days</p>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Keep coding to maintain your streak!</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  {contributions.todayContributionCount > 0 
+                    ? "Including today's contributions!" 
+                    : "Make a contribution today to continue your streak!"}
+                </p>
               </div>
               
               <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
@@ -117,8 +123,24 @@ export default function StreakPage() {
             </div>
 
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold mb-6">Contribution Calendar</h2>
-              
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+                <h2 className="text-xl font-semibold">Contribution Calendar</h2>
+                <div className="flex flex-col sm:flex-row sm:space-x-4">
+                  <div className="flex items-center">
+                    <span className="text-sm text-gray-700 dark:text-gray-300 mr-2">Yesterday:</span>
+                    <span className="font-semibold">
+                      {contributions.yesterdayContributionCount} contribution{contributions.yesterdayContributionCount !== 1 ? 's' : ''}
+                    </span>
+                  </div>
+                  <div className="flex items-center mt-1 sm:mt-0">
+                    <span className="text-sm text-gray-700 dark:text-gray-300 mr-2">Today:</span>
+                    <span className="font-semibold">
+                      {contributions.todayContributionCount} contribution{contributions.todayContributionCount !== 1 ? 's' : ''}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
               <div className="flex flex-col sm:flex-row gap-6">
                 {/* Days of week - vertical */}
                 <div className="flex flex-col justify-end pt-6">

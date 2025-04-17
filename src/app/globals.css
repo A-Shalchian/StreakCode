@@ -1,1 +1,8 @@
 @import "tailwindcss";
+
+@layer components {
+    .hover-nav {
+      @apply hover:text-gray-500 hover:cursor-pointer;
+    }
+  
+  }

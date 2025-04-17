@@ -1,9 +1,8 @@
 "use client";
 import React, { useState } from "react";
-import { Menu, Album, X, User } from "lucide-react";
+import { Menu, X, User, Home } from "lucide-react";
 import { AuthLinks } from "@/components/navbar/AuthLinks";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { signOut, useSession } from "next-auth/react";
 
@@ -11,28 +10,23 @@ export const Navbar: React.FC = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const { data: session, status } = useSession();
-  const pathname = usePathname();
+
+  // Helper function to close all menus
+  const closeAllMenus = () => {
+    setMenuOpen(false);
+    setShowUserMenu(false);
+  };
 
   return (
     <>
       <header className="bg-emerald-400 sticky top-0 z-20">
         <div className="container mx-auto max-w-full px-[80px] flex items-center justify-between p-4">
           {/* Left side: Logo/Brand */}
-          <Link href="/">
+          <Link href="/" onClick={closeAllMenus}>
             <div className="text-2xl font-bold tracking-wider hover:scale-105 transition-transform">
               StreakCode
             </div>
           </Link>
-
-          {/* Center: Blog Title - Only show on home page */}
-          {pathname === "/" && (
-            <div
-              className={`flex text-lg font-semibold items-center justify-center space-x-2 `}
-            >
-              <Album size={24} />
-              <span>StreakCode</span>
-            </div>
-          )}
 
           {/* Right side: Icon buttons */}
           <div className="flex space-x-4 items-center">
@@ -66,14 +60,14 @@ export const Navbar: React.FC = () => {
                       <Link
                         href="/streak"
                         className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
-                        onClick={() => setShowUserMenu(false)}
+                        onClick={closeAllMenus}
                       >
                         GitHub Streak
                       </Link>
                       <Link
                         href="/github"
                         className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
-                        onClick={() => setShowUserMenu(false)}
+                        onClick={closeAllMenus}
                       >
                         GitHub Connection
                       </Link>
@@ -81,7 +75,7 @@ export const Navbar: React.FC = () => {
                       <button
                         onClick={() => {
                           signOut();
-                          setShowUserMenu(false);
+                          closeAllMenus();
                         }}
                         className="w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
                       >
@@ -92,7 +86,7 @@ export const Navbar: React.FC = () => {
                     <Link
                       href="/login"
                       className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
-                      onClick={() => setShowUserMenu(false)}
+                      onClick={closeAllMenus}
                     >
                       Login
                     </Link>
@@ -129,9 +123,12 @@ export const Navbar: React.FC = () => {
           <nav className="flex flex-col items-center text-center">
             <ul className="space-y-4 text-2xl font-semibold">
               <li className="hover-nav">
-                <Link href="/">Home</Link>
+                <Link href="/" onClick={closeAllMenus} className="flex items-center">
+                  <Home size={24} className="mr-2" />
+                  Home
+                </Link>
               </li>
-              <AuthLinks />
+              <AuthLinks setMenuOpen={closeAllMenus} />
             </ul>
           </nav>
         </div>
@@ -155,10 +152,13 @@ export const Navbar: React.FC = () => {
           <nav className="flex flex-col items-center text-center">
             <ul className="space-y-4 text-2xl font-semibold">
               <li className="hover-nav">
-                <Link href="/">Home</Link>
+                <Link href="/" onClick={closeAllMenus} className="flex items-center">
+                  <Home size={24} className="mr-2" />
+                  Home
+                </Link>
               </li>
 
-              <AuthLinks />
+              <AuthLinks setMenuOpen={closeAllMenus} />
             </ul>
           </nav>
         </div>

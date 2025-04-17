@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { AuthProvider } from "@/providers/AuthProvider";
 import "./globals.css";
 import { Navbar } from "@/homeSections/Navbar";
+import { Footer } from "@/homeSections/Footer";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -33,6 +34,7 @@ export default function RootLayout({
             pauseOnHover
             theme="colored"
           />
+          <Footer />
         </AuthProvider>
       </body>
     </html>

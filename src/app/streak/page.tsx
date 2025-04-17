@@ -8,6 +8,7 @@ import ContributionCalendar from "@/components/streak/ContributionCalendar";
 import LoadingSpinner from "@/components/streak/LoadingSpinner";
 import EmptyState from "@/components/streak/EmptyState";
 import ErrorMessage from "@/components/streak/ErrorMessage";
+import { toast } from "react-toastify";
 
 interface ContributionDay {
   date: string;
@@ -32,7 +33,7 @@ export default function StreakPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [contributions, setContributions] = useState<ContributionsData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -43,11 +44,11 @@ export default function StreakPage() {
 
   useEffect(() => {
     if (status === "authenticated" && session) {
-      fetchContributions();
+      fetchGithubContributions();
     }
   }, [status, session]);
 
-  const fetchContributions = async () => {
+  const fetchGithubContributions = async () => {
     setIsLoading(true);
     setError(null);
 
@@ -61,9 +62,9 @@ export default function StreakPage() {
 
       const data = await response.json();
       setContributions(data);
-    } catch (error) {
-      console.error("Error fetching contributions:", error);
-      setError(error instanceof Error ? error.message : "An error occurred");
+    } catch (err) {
+      setError(err.message);
+      toast.error(err.message);
     } finally {
       setIsLoading(false);
     }
@@ -73,7 +74,7 @@ export default function StreakPage() {
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white p-4 pt-20">
-      <div className="max-w-6xl mx-auto">
+      <div className="container mx-auto max-w-5xl">
         <h1 className="text-3xl font-bold mb-8 text-center">Your GitHub Streak</h1>
 
         {error ? (

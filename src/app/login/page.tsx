@@ -1,8 +1,20 @@
 "use client";
 import { signIn } from "next-auth/react";
 import { FaGithub } from "react-icons/fa";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function Login() {
+
+  const { status } = useSession();
+  const router = useRouter();
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.push("/streak");
+    }
+  }, [status, router]);
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 pb-32">
       <div className="max-w-md w-full space-y-8 p-16 bg-white rounded-xl shadow-lg">

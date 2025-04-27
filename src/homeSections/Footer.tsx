@@ -3,13 +3,13 @@ import { FiInstagram, FiLinkedin, FiYoutube, FiGithub } from "react-icons/fi";
 import Link from "next/link";
 
 export const Footer: React.FC = () => {
-  return (
+  return ( 
     <footer className="bg-gray-800 text-white py-6 w-full text-center">
       <div className="container mx-auto px-[80px] inline-flex flex-col items-center justify-center">
         <div className="flex flex-col items-center">
           <div>
             <p className="text-sm">
-              &copy; {new Date().getFullYear()} StreakCode. All rights reserved.
+              &copy; {new Date().getFullYear()} <span className="hover:underline hover-nav">StreakCode</span>. All rights reserved.
             </p>
           </div>
         </div>

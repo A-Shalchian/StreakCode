@@ -19,11 +19,11 @@ export const Navbar: React.FC = () => {
 
   return (
     <>
-      <header className="bg-emerald-400 sticky top-0 z-20">
+      <header className="bg-indigo-400 sticky top-0 z-20">
         <div className="container mx-auto max-w-full px-[80px] flex items-center justify-between p-4">
           {/* Left side: Logo/Brand */}
           <Link href="/" onClick={closeAllMenus}>
-            <div className="text-2xl font-bold tracking-wider hover:scale-105 transition-transform">
+            <div className="text-white text-3xl font-bold tracking-wider hover:scale-105 transition-transform">
               StreakCode
             </div>
           </Link>
@@ -71,7 +71,7 @@ export const Navbar: React.FC = () => {
                       >
                         GitHub Connection
                       </Link>
-                      
+
                       <button
                         onClick={() => {
                           signOut();
@@ -123,7 +123,11 @@ export const Navbar: React.FC = () => {
           <nav className="flex flex-col items-center text-center">
             <ul className="space-y-4 text-2xl font-semibold">
               <li className="hover-nav">
-                <Link href="/" onClick={closeAllMenus} className="flex items-center">
+                <Link
+                  href="/"
+                  onClick={closeAllMenus}
+                  className="flex items-center"
+                >
                   <Home size={24} className="mr-2" />
                   Home
                 </Link>
@@ -152,7 +156,11 @@ export const Navbar: React.FC = () => {
           <nav className="flex flex-col items-center text-center">
             <ul className="space-y-4 text-2xl font-semibold">
               <li className="hover-nav">
-                <Link href="/" onClick={closeAllMenus} className="flex items-center">
+                <Link
+                  href="/"
+                  onClick={closeAllMenus}
+                  className="flex items-center"
+                >
                   <Home size={24} className="mr-2" />
                   Home
                 </Link>

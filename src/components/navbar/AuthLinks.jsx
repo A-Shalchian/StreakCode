@@ -20,20 +20,20 @@ export const AuthLinks = ({ setMenuOpen }) => {
 
   if (status === "authenticated") {
     return (
-      <ul className="flex flex-col space-y-4 text-2xl font-semibold">
+      <ul className="flex flex-col space-y-4 text-2xl font-semibold dark:text-gray-200">
         <li className="hover-nav">
-          <Link 
-            href="/streak" 
+          <Link
+            href="/streak"
             className="flex items-center hover-nav"
             onClick={() => handleClick()}
           >
-            <FaChartLine className="mr-2" /> 
+            <FaChartLine className="mr-2" />
             Streak
           </Link>
         </li>
         <li className="hover-nav">
-          <Link 
-            href="/github" 
+          <Link
+            href="/github"
             className="flex items-center hover-nav"
             onClick={() => handleClick()}
           >
@@ -42,7 +42,7 @@ export const AuthLinks = ({ setMenuOpen }) => {
           </Link>
         </li>
         <li className="hover-nav">
-          <span 
+          <span
             onClick={() => handleClick(() => signOut())}
             className="flex items-center cursor-pointer hover-nav"
           >
@@ -56,10 +56,10 @@ export const AuthLinks = ({ setMenuOpen }) => {
 
   if (status === "unauthenticated") {
     return (
-      <div>
+      <div className="dark:text-gray-200">
         <li className="hover-nav">
-          <Link 
-            href="/login" 
+          <Link
+            href="/login"
             className="flex items-center hover-nav"
             onClick={() => handleClick()}
           >

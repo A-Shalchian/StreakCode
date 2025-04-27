@@ -84,13 +84,15 @@ export default function ContributionCalendar({
                     const shiftedDate = new Date(day.date);
                     shiftedDate.setDate(shiftedDate.getDate() + 1);
                     const shiftedISO = shiftedDate.toISOString().split("T")[0];
-                    
-                    const formattedDate = shiftedDate.toLocaleDateString(undefined, {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    });
-                  
+
+                    const formattedDate = shiftedDate.toLocaleDateString(
+                      undefined,
+                      {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      }
+                    );
 
                     return (
                       <div
@@ -141,10 +143,10 @@ export default function ContributionCalendar({
       <div className="flex items-center justify-end mt-6 gap-2">
         <span className="text-xs text-gray-500 dark:text-gray-400">Less</span>
         <div className="w-3 h-3 rounded-sm bg-[#ebedf0] dark:bg-[#161b22]"></div>
-        <div className="w-3 h-3 rounded-sm bg-[#9be9a8] dark:bg-[#0e4429]"></div>
-        <div className="w-3 h-3 rounded-sm bg-[#40c463] dark:bg-[#26a641]"></div>
-        <div className="w-3 h-3 rounded-sm bg-[#30a14e] dark:bg-[#39d353]"></div>
-        <div className="w-3 h-3 rounded-sm bg-[#216e39] dark:bg-[#2ea043]"></div>
+        <div className="w-3 h-3 rounded-sm bg-[#a5b4fc] dark:bg-[#0e4429]"></div>
+        <div className="w-3 h-3 rounded-sm bg-[#5C6BC0] dark:bg-[#26a641]"></div>
+        <div className="w-3 h-3 rounded-sm bg-[#303F9F] dark:bg-[#39d353]"></div>
+        <div className="w-3 h-3 rounded-sm bg-[#312e81] dark:bg-[#2ea043]"></div>
         <span className="text-xs text-gray-500 dark:text-gray-400">More</span>
       </div>
     </div>

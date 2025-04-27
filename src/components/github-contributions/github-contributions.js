@@ -9,55 +9,54 @@ export function generateMockContributions() {
   const weeks = [];
   const today = new Date();
   const startDate = new Date(today);
-  startDate.setDate(startDate.getDate() - (52 * 7));
+  startDate.setDate(startDate.getDate() - 52 * 7);
 
   let totalContributions = 0;
-  
+
   // Generate mock data for each week
   for (let weekIndex = 0; weekIndex < 52; weekIndex++) {
     const contributionDays = [];
-    
+
     // Generate data for each day of the week
     for (let dayIndex = 0; dayIndex < 7; dayIndex++) {
       const currentDate = new Date(startDate);
-      currentDate.setDate(currentDate.getDate() + (weekIndex * 7) + dayIndex);
-      
+      currentDate.setDate(currentDate.getDate() + weekIndex * 7 + dayIndex);
+
       // Format date as YYYY-MM-DD
-      const dateStr = currentDate.toISOString().split('T')[0];
-      
+      const dateStr = currentDate.toISOString().split("T")[0];
+
       // Generate a random number of contributions (weighted to have more zeros)
       let contributionCount = 0;
       const random = Math.random();
-      
+
       if (random > 0.6) {
         // 40% chance of having contributions
         contributionCount = Math.floor(Math.random() * 10) + 1;
         totalContributions += contributionCount;
       }
-      
-      // Determine color based on contribution count (GitHub-like colors)
+
       let color = "#ebedf0"; // No contributions
       if (contributionCount > 0) {
-        if (contributionCount < 3) color = "#9be9a8";
-        else if (contributionCount < 6) color = "#40c463";
-        else if (contributionCount < 9) color = "#30a14e";
-        else color = "#216e39";
+        if (contributionCount < 3) color = "#a5b4fc"; // indigo-300
+        else if (contributionCount < 6) color = "#6366f1"; // indigo-500
+        else if (contributionCount < 9) color = "#3730a3"; // indigo-800
+        else color = "#312e81"; // indigo-900
       }
-      
+
       contributionDays.push({
         date: dateStr,
         contributionCount,
-        color
+        color,
       });
     }
-    
+
     weeks.push({ contributionDays });
   }
-  
+
   // Create a streak pattern in the most recent few weeks
   const recentWeeks = weeks.slice(-4);
   let currentStreak = 10; // Mock current streak
-  
+
   // Create a streak in the most recent days
   for (let i = recentWeeks.length - 1; i >= 0; i--) {
     const week = recentWeeks[i];
@@ -65,16 +64,16 @@ export function generateMockContributions() {
       if (currentStreak > 0) {
         const day = week.contributionDays[j];
         const contributions = Math.floor(Math.random() * 5) + 1;
-        
+
         day.contributionCount = contributions;
         totalContributions += contributions - day.contributionCount; // Adjust the total
-        
+
         // Update color
-        if (contributions < 3) day.color = "#9be9a8";
-        else if (contributions < 6) day.color = "#40c463";
-        else if (contributions < 9) day.color = "#30a14e";
-        else day.color = "#216e39";
-        
+        if (contributions < 3) day.color = "#a5b4fc"; // indigo-300
+        else if (contributions < 6) day.color = "#6366f1"; // indigo-500
+        else if (contributions < 9) day.color = "#3730a3"; // indigo-800
+        else day.color = "#312e81"; // indigo-900
+
         currentStreak--;
       } else {
         break;
@@ -82,7 +81,7 @@ export function generateMockContributions() {
     }
     if (currentStreak <= 0) break;
   }
-  
+
   return {
     weeks,
     totalContributions,
@@ -91,7 +90,9 @@ export function generateMockContributions() {
 
 export async function getContributions(accessToken) {
   if (!accessToken) {
-    throw new Error("No GitHub access token provided. Please connect your GitHub account.");
+    throw new Error(
+      "No GitHub access token provided. Please connect your GitHub account."
+    );
   }
 
   // This query gets both public and private contributions
@@ -116,7 +117,7 @@ export async function getContributions(accessToken) {
 
   try {
     console.log("Fetching contributions with GraphQL...");
-    
+
     const response = await axios.post(
       "https://api.github.com/graphql",
       { query },
@@ -126,22 +127,26 @@ export async function getContributions(accessToken) {
         },
       }
     );
-    
+
     // Check if the response has the expected structure
     if (!response.data || !response.data.data || !response.data.data.viewer) {
       console.error("Invalid response structure:", response.data);
       throw new Error("Invalid response structure from GitHub API");
     }
-    
+
     // Check for GraphQL errors
     if (response.data.errors) {
       console.error("GraphQL errors:", response.data.errors);
-      throw new Error(response.data.errors[0].message || "Error in GraphQL query");
+      throw new Error(
+        response.data.errors[0].message || "Error in GraphQL query"
+      );
     }
-    
+
     // Check if the contributions collection exists
-    if (!response.data.data.viewer.contributionsCollection || 
-        !response.data.data.viewer.contributionsCollection.contributionCalendar) {
+    if (
+      !response.data.data.viewer.contributionsCollection ||
+      !response.data.data.viewer.contributionsCollection.contributionCalendar
+    ) {
       console.error("Contributions collection not found in response");
       throw new Error("Contributions data not available");
     }
@@ -157,6 +162,25 @@ export async function getContributions(accessToken) {
       `GraphQL found ${totalContributions} total contributions across ${weeks.length} weeks`
     );
 
+    // Apply custom color scheme based on contribution count
+    weeks.forEach((week) => {
+      week.contributionDays.forEach((day) => {
+        const contributions = day.contributionCount;
+        // Override the GitHub provided colors with our custom color scheme
+        if (contributions === 0) {
+          day.color = "#ebedf0"; // No contributions
+        } else if (contributions <= 3) {
+          day.color = "#a5b4fc"; // indigo-300
+        } else if (contributions <= 6) {
+          day.color = "#5C6BC0"; // indigo-400
+        } else if (contributions <= 9) {
+          day.color = "#303F9F"; // indigo-700
+        } else {
+          day.color = "#312e81"; // indigo-900
+        }
+      });
+    });
+
     // Count contributions by week for debugging
     let contribsByWeek = 0;
     weeks.forEach((week) => {
@@ -169,7 +193,7 @@ export async function getContributions(accessToken) {
 
     return {
       weeks,
-      totalContributions
+      totalContributions,
     };
   } catch (error) {
     console.error(
@@ -183,7 +207,7 @@ export async function getContributions(accessToken) {
 // Create a named object for the default export
 const GitHubContributions = {
   getContributions,
-  generateMockContributions
+  generateMockContributions,
 };
 
 export default GitHubContributions;

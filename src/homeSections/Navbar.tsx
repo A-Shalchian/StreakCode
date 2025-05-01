@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import { Menu, X, User, Home } from "lucide-react";
 import { AuthLinks } from "@/components/navbar/AuthLinks";
-import { ThemeToggle } from "@/components/ui";
 import Link from "next/link";
 import Image from "next/image";
 import { signOut, useSession } from "next-auth/react";
@@ -32,7 +31,6 @@ export const Navbar: React.FC = () => {
           {/* Right side: Icon buttons */}
           <div className="flex space-x-4 items-center">
             {/* Theme Toggle */}
-            <ThemeToggle className="text-white hover:text-gray-200" />
 
             {/* User Menu */}
             <div className="relative">
@@ -136,9 +134,7 @@ export const Navbar: React.FC = () => {
                   Home
                 </Link>
               </li>
-              <li className="hover-nav mt-4 flex justify-center">
-                <ThemeToggle />
-              </li>
+              <li className="hover-nav mt-4 flex justify-center"></li>
               <AuthLinks setMenuOpen={closeAllMenus} />
             </ul>
           </nav>
@@ -172,9 +168,7 @@ export const Navbar: React.FC = () => {
                   Home
                 </Link>
               </li>
-              <li className="hover-nav mt-4 flex justify-center">
-                <ThemeToggle />
-              </li>
+              <li className="hover-nav mt-4 flex justify-center"></li>
               <AuthLinks setMenuOpen={closeAllMenus} />
             </ul>
           </nav>

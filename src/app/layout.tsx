@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { AuthProvider } from "@/providers/AuthProvider";
-import { ThemeProvider } from "@/providers/ThemeProvider";
 import "./globals.css";
 import { Navbar } from "@/homeSections/Navbar";
 import { Footer } from "@/homeSections/Footer";
@@ -21,25 +20,23 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={"antialiased"}>
-        <ThemeProvider>
-          <AuthProvider>
-            <Navbar />
-            {children}
-            <ToastContainer
-              position="top-right"
-              autoClose={5000}
-              hideProgressBar={false}
-              newestOnTop
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme="colored"
-            />
-            <Footer />
-          </AuthProvider>
-        </ThemeProvider>
+        <AuthProvider>
+          <Navbar />
+          {children}
+          <ToastContainer
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="colored"
+          />
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );

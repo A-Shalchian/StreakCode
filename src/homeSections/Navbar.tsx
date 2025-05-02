@@ -123,7 +123,7 @@ export const Navbar: React.FC = () => {
             </button>
           </div>
           <nav className="flex flex-col items-center text-center">
-            <ul className="space-y-4 text-2xl font-semibold">
+            <ul className="space-y-2 text-2xl font-semibold">
               <li className="hover-nav">
                 <Link
                   href="/"
@@ -134,7 +134,7 @@ export const Navbar: React.FC = () => {
                   Home
                 </Link>
               </li>
-              <li className="hover-nav mt-4 flex justify-center"></li>
+              <li className="hover-nav  flex justify-center"></li>
               <AuthLinks setMenuOpen={closeAllMenus} />
             </ul>
           </nav>
@@ -157,7 +157,7 @@ export const Navbar: React.FC = () => {
             </button>
           </div>
           <nav className="flex flex-col items-center text-center">
-            <ul className="space-y-4 text-2xl font-semibold">
+            <ul className="space-y-2 text-2xl font-semibold">
               <li className="hover-nav">
                 <Link
                   href="/"
@@ -168,7 +168,7 @@ export const Navbar: React.FC = () => {
                   Home
                 </Link>
               </li>
-              <li className="hover-nav mt-4 flex justify-center"></li>
+              <li className="hover-nav flex justify-center"></li>
               <AuthLinks setMenuOpen={closeAllMenus} />
             </ul>
           </nav>

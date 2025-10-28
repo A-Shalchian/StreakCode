@@ -1,9 +1,37 @@
+@config "../../tailwind.config.ts";
 @import "tailwindcss";
 
-/* Add base dark mode   styles */
+
+/* Minecraft Font */
+@font-face {
+  font-family: 'Monocraft';
+  src: url('/fonts/Monocraft-01.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Monocraft';
+  src: url('/fonts/Monocraft-Bold-05.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Monocraft';
+  src: url('/fonts/Monocraft-Light-09.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+}
+
+/* Add base dark mode styles */
 @layer base {
+  * {
+    font-family: 'Monocraft', monospace;
+  }
+
   body {
-    @apply bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200;
+    @apply bg-white text-black dark:bg-black dark:text-white transition-colors duration-200;
   }
 }
 

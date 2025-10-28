@@ -1,15 +1,22 @@
 "use client";
-import React, { useState } from "react";
-import { Menu, X, User, Home } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Menu, X, User, Home, Moon, Sun } from "lucide-react";
 import { AuthLinks } from "@/components/navbar/AuthLinks";
 import Link from "next/link";
 import Image from "next/image";
 import { signOut, useSession } from "next-auth/react";
+import { useTheme } from "next-themes";
 
 export const Navbar: React.FC = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const { data: session, status } = useSession();
+  const { theme, setTheme } = useTheme();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Helper function to close all menus
   const closeAllMenus = () => {
@@ -19,11 +26,11 @@ export const Navbar: React.FC = () => {
 
   return (
     <>
-      <header className="bg-indigo-400 dark:bg-indigo-600 sticky top-0 z-20">
-        <div className="container mx-auto max-w-full px-[80px] flex items-center justify-between p-4">
+      <header className="bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 sticky top-0 z-20 backdrop-blur-sm bg-opacity-90 dark:bg-opacity-90">
+        <div className="container mx-auto max-w-7xl px-6 lg:px-12 flex items-center justify-between py-4">
           {/* Left side: Logo/Brand */}
           <Link href="/" onClick={closeAllMenus}>
-            <div className="text-white text-3xl font-bold tracking-wider hover:scale-105 transition-transform">
+            <div className="text-black dark:text-white text-2xl font-bold tracking-tight hover:opacity-70 transition-opacity">
               StreakCode
             </div>
           </Link>
@@ -31,6 +38,23 @@ export const Navbar: React.FC = () => {
           {/* Right side: Icon buttons */}
           <div className="flex space-x-4 items-center">
             {/* Theme Toggle */}
+            {mounted ? (
+              <button
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                className="w-8 h-8 flex items-center justify-center rounded-lg hover:opacity-70 transition-opacity"
+                aria-label="Toggle theme"
+              >
+                {theme === "dark" ? (
+                  <Sun size={20} className="text-white" />
+                ) : (
+                  <Moon size={20} className="text-black" />
+                )}
+              </button>
+            ) : (
+              <div className="w-8 h-8 flex items-center justify-center">
+                <div className="w-5 h-5 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
+              </div>
+            )}
 
             {/* User Menu */}
             <div className="relative">
@@ -56,19 +80,19 @@ export const Navbar: React.FC = () => {
                 )}
               </button>
               {showUserMenu && (
-                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg py-2">
+                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-lg py-2">
                   {status === "authenticated" && session?.user ? (
                     <>
                       <Link
                         href="/streak"
-                        className="block px-4 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        className="block px-4 py-2 text-black dark:text-white hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
                         onClick={closeAllMenus}
                       >
                         GitHub Streak
                       </Link>
                       <Link
                         href="/github"
-                        className="block px-4 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        className="block px-4 py-2 text-black dark:text-white hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
                         onClick={closeAllMenus}
                       >
                         GitHub Connection
@@ -79,7 +103,7 @@ export const Navbar: React.FC = () => {
                           signOut();
                           closeAllMenus();
                         }}
-                        className="w-full text-left px-4 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        className="w-full text-left px-4 py-2 text-black dark:text-white hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
                       >
                         Logout
                       </button>
@@ -87,7 +111,7 @@ export const Navbar: React.FC = () => {
                   ) : (
                     <Link
                       href="/login"
-                      className="block px-4 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      className="block px-4 py-2 text-black dark:text-white hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
                       onClick={closeAllMenus}
                     >
                       Login
@@ -101,7 +125,7 @@ export const Navbar: React.FC = () => {
             <Menu
               size={24}
               onClick={() => setMenuOpen(true)}
-              className="cursor-pointer hover:text-white transition-colors hover:scale-105"
+              className="cursor-pointer text-black dark:text-white hover:opacity-70 transition-opacity"
             />
           </div>
         </div>
@@ -109,7 +133,7 @@ export const Navbar: React.FC = () => {
 
       {/* Mobile Menu: slides down from the top for small screens */}
       <div
-        className={`fixed top-0 left-0 right-0 z-50 shadow-lg bg-white dark:bg-gray-800 transition-transform duration-300 transform lg:hidden ${
+        className={`fixed top-0 left-0 right-0 z-50 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-black transition-transform duration-300 transform lg:hidden ${
           isMenuOpen ? "translate-y-0" : "-translate-y-full"
         }`}
       >
@@ -143,7 +167,7 @@ export const Navbar: React.FC = () => {
 
       {/* Desktop Sidebar: slides in from the right for lg+ screens */}
       <div
-        className={`hidden lg:block lg:z-50 lg:bg-white lg:dark:bg-gray-800 lg:fixed lg:top-0 lg:right-0 lg:h-full lg:w-46 lg:shadow-lg lg:transition-transform lg:duration-300 lg:transform ${
+        className={`hidden lg:block lg:z-50 lg:bg-white lg:dark:bg-black lg:border-l lg:border-gray-200 lg:dark:border-gray-800 lg:fixed lg:top-0 lg:right-0 lg:h-full lg:w-46 lg:transition-transform lg:duration-300 lg:transform ${
           isMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >

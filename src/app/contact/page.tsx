@@ -161,7 +161,7 @@ export default function ContactPage() {
             </div>
             <h3 className="text-xl font-semibold mb-2">Email Us</h3>
             <p className="text-gray-700 dark:text-gray-300">
-              contact@codestreak.com
+              contact@streakcode.com
             </p>
             <p className="text-gray-500 dark:text-gray-400 text-sm mt-2">
               We&apos;ll respond within 24 hours
@@ -308,7 +308,7 @@ export default function ContactPage() {
                 <h3 className="font-semibold mb-2">Support</h3>
                 <p className="text-indigo-100">
                   Get help with any technical issues or questions about
-                  CodeStreak
+                  StreakCode
                 </p>
               </div>
 

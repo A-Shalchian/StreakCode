@@ -38,7 +38,7 @@ export default function Login() {
         </div>
         <div className="mt-6">
           <p className="text-center text-xs text-gray-500">
-            CodeStreak requires GitHub access to track your contributions and calculate your coding streak.
+            StreakCode requires GitHub access to track your contributions and calculate your coding streak.
           </p>
         </div>
       </div>

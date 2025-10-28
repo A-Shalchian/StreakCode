@@ -9,13 +9,13 @@ export default function AboutPage() {
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white p-4 pt-20">
       <div className="container mx-auto max-w-5xl">
         <h1 className="text-3xl font-bold mb-8 text-center">
-          About CodeStreak
+          About StreakCode
         </h1>
 
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 mb-8">
           <h2 className="text-2xl font-semibold mb-4">Our Mission</h2>
           <p className="text-gray-700 dark:text-gray-300 mb-6">
-            CodeStreak was created to help developers maintain consistent coding
+            StreakCode was created to help developers maintain consistent coding
             habits and visualize their progress over time. We believe that
             building a daily coding habit leads to improved skills, better
             productivity, and a deeper engagement with the developer community.
@@ -26,7 +26,7 @@ export default function AboutPage() {
             Many developers struggle with consistency in their coding journey.
             GitHub&apos;s contribution graph is a great start, but we wanted to
             provide more detailed insights and motivation to help developers
-            stay on track with their goals. CodeStreak fills this gap by
+            stay on track with their goals. StreakCode fills this gap by
             offering accurate streak tracking, timezone-aware contributions, and
             comprehensive statistics.
           </p>
@@ -40,7 +40,7 @@ export default function AboutPage() {
             <h3 className="text-xl font-semibold mb-2">For Developers</h3>
             <p className="text-gray-700 dark:text-gray-300 flex-grow">
               Whether you&apos;re a seasoned programmer or just starting out,
-              CodeStreak helps you build consistency in your coding practice and
+              StreakCode helps you build consistency in your coding practice and
               provides motivation to code every day.
             </p>
           </div>

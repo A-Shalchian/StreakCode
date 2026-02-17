@@ -2,10 +2,11 @@
 import React from "react";
 import Link from "next/link";
 import { FaGithub } from "react-icons/fa";
-import { useSession } from "next-auth/react";
+import { useAuth } from "@/providers/AuthProvider";
 
 export const CTA: React.FC = () => {
-  const { status } = useSession();
+  const { user, isLoading } = useAuth();
+  const isAuthenticated = !isLoading && !!user;
 
   return (
     <section className="py-24 bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800">
@@ -21,7 +22,7 @@ export const CTA: React.FC = () => {
               accurate statistics.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
-              {status === "authenticated" ? (
+              {isAuthenticated ? (
                 <Link
                   href="/streak"
                   className="inline-flex items-center justify-center px-8 py-4 border-2 border-black dark:border-white text-base font-medium text-white dark:text-black bg-black dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors"

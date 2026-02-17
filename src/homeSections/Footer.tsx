@@ -16,6 +16,9 @@ export const Footer: React.FC = () => {
           <Link href="/streak" className="hover:opacity-70 transition-opacity">
             Streak
           </Link>
+          <Link href="/profile" className="hover:opacity-70 transition-opacity">
+            Profile
+          </Link>
           <Link href="/github" className="hover:opacity-70 transition-opacity">
             Connect GitHub
           </Link>

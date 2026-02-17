@@ -1,5 +1,4 @@
-import { getAuthSession } from "@/utils/auth";
-import prisma from "@/utils/connect";
+import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
 import { getContributions } from "@/components/github-contributions/github-contributions";
 
@@ -10,24 +9,30 @@ import { getLocalDateStrings } from "@/utils/github/getLocalDateStrings";
 
 export async function GET() {
   try {
-    const session = await getAuthSession();
+    const supabase = await createClient();
 
-    if (!session || !session.user) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
       return NextResponse.json(
         { error: "You must be logged in to view contributions" },
         { status: 401 }
       );
     }
 
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-    });
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("github_access_token")
+      .eq("id", user.id)
+      .single();
 
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    if (profileError || !profile) {
+      return NextResponse.json({ error: "User profile not found" }, { status: 404 });
     }
 
-    if (!user.githubAccessToken) {
+    if (!profile.github_access_token) {
       return NextResponse.json(
         {
           error: "GitHub access token not found. Please connect your GitHub account.",
@@ -38,7 +43,7 @@ export async function GET() {
 
     try {
       const { weeks, totalContributions } = await getContributions(
-        user.githubAccessToken
+        profile.github_access_token
       );
 
       const { todayISO, yesterdayISO } = getLocalDateStrings();
@@ -57,11 +62,6 @@ export async function GET() {
         todayContributionCount
       );
 
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { streak: currentStreak },
-      });
-
       return NextResponse.json({
         weeks: updatedWeeks,
         totalContributions,
@@ -78,10 +78,10 @@ export async function GET() {
         error.response?.status === 401 ||
         error.response?.data?.message?.includes("Bad credentials")
       ) {
-        await prisma.user.update({
-          where: { id: user.id },
-          data: { githubAccessToken: null },
-        });
+        await supabase
+          .from("profiles")
+          .update({ github_access_token: null })
+          .eq("id", user.id);
 
         return NextResponse.json(
           {

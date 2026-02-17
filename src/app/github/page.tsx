@@ -1,49 +1,72 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useSession, signIn } from "next-auth/react";
+import { useAuth } from "@/providers/AuthProvider";
+import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { FaSpinner, FaGithub } from "react-icons/fa";
 import LoadingSpinner from "@/components/streak/LoadingSpinner";
 
 export default function GithubSettingsPage() {
-  const { data: session, status } = useSession();
+  const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
+  const supabase = createClient();
   const [isConnecting, setIsConnecting] = useState(false);
-  // Add a ref to track if the success toast has been shown
+  const [githubToken, setGithubToken] = useState<string | null>(null);
+  const [githubUsername, setGithubUsername] = useState<string | null>(null);
+  const [profileLoading, setProfileLoading] = useState(true);
   const successToastShown = useRef(false);
 
-  // Redirect to login if not authenticated
   useEffect(() => {
-    if (status === "unauthenticated") {
+    if (!authLoading && !user) {
       router.push("/login");
       toast.error("You must be logged in to access this page");
     }
-  }, [status, router]);
+  }, [authLoading, user, router]);
 
-  // Show success toast when connected, but only once
   useEffect(() => {
-    if (status === "authenticated" && session?.user?.githubAccessToken && !successToastShown.current) {
-      // Set the ref to true to prevent showing the toast again
+    if (!authLoading && user) {
+      supabase
+        .from("profiles")
+        .select("github_access_token, github_username")
+        .eq("id", user.id)
+        .single()
+        .then(({ data }) => {
+          if (data) {
+            setGithubToken(data.github_access_token);
+            setGithubUsername(data.github_username);
+          }
+          setProfileLoading(false);
+        });
+    }
+  }, [authLoading, user]);
+
+  useEffect(() => {
+    if (!profileLoading && githubToken && !successToastShown.current) {
       successToastShown.current = true;
       toast.success("Your GitHub account is connected successfully!");
     }
-  }, [status, session?.user?.githubAccessToken]);
+  }, [profileLoading, githubToken]);
 
-  const handleGithubConnect = () => {
+  const handleGithubConnect = async () => {
     setIsConnecting(true);
     try {
-      signIn("github", { callbackUrl: "/github" });
-      // Toast will appear after successful redirect and authentication
+      const origin = window.location.origin;
+      await supabase.auth.signInWithOAuth({
+        provider: "github",
+        options: {
+          scopes: "read:user repo user:email",
+          redirectTo: `${origin}/auth/callback`,
+        },
+      });
     } catch {
-      // Show error toast if sign-in fails
       setIsConnecting(false);
       toast.error("Failed to connect to GitHub. Please try again.");
     }
   };
 
-  if (status === "loading") {
+  if (authLoading || profileLoading) {
     return <LoadingSpinner />;
   }
 
@@ -54,22 +77,22 @@ export default function GithubSettingsPage() {
 
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
           <h2 className="text-xl font-semibold mb-4">Connection Status</h2>
-          
-          {session?.user?.githubAccessToken ? (
+
+          {githubToken ? (
             <div>
               <div className="flex items-center mb-4">
                 <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
                 <span className="text-green-500 font-medium">Connected to GitHub</span>
               </div>
-              
-              {session?.user?.githubUsername && (
+
+              {(githubUsername || user?.user_metadata?.user_name) && (
                 <div className="mt-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-md">
                   <p className="text-sm text-gray-700 dark:text-gray-300">
-                    Connected as <span className="font-bold">{session.user.githubUsername}</span>
+                    Connected as <span className="font-bold">{githubUsername || user?.user_metadata?.user_name}</span>
                   </p>
                 </div>
               )}
-              
+
               <div className="mt-6">
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   Your GitHub account is connected successfully. You can now view your contribution streak and statistics.
@@ -91,7 +114,7 @@ export default function GithubSettingsPage() {
                 <div className="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
                 <span className="text-red-500 font-medium">Not connected to GitHub</span>
               </div>
-              
+
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
                 Connect your GitHub account to track your contribution streaks and view your GitHub statistics.
               </p>

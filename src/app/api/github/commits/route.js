@@ -1,11 +1,9 @@
-import { getAuthSession } from "@/utils/auth";
-import prisma from "@/utils/connect";
+import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
 import { getDailyCommits } from "@/components/github-commits/github-commits";
 
 export async function GET(request) {
   try {
-    // Get the date from the request query parameters
     const { searchParams } = new URL(request.url);
     const date = searchParams.get("date");
 
@@ -16,7 +14,6 @@ export async function GET(request) {
       );
     }
 
-    // Validate date format (YYYY-MM-DD)
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
     if (!dateRegex.test(date)) {
       return NextResponse.json(
@@ -25,26 +22,30 @@ export async function GET(request) {
       );
     }
 
-    // Get the user session
-    const session = await getAuthSession();
+    const supabase = await createClient();
 
-    if (!session || !session.user) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
       return NextResponse.json(
         { error: "You must be logged in to view commits" },
         { status: 401 }
       );
     }
 
-    // Get the user from the database to access their GitHub token
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-    });
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("github_access_token")
+      .eq("id", user.id)
+      .single();
 
-    if (!user) {
+    if (profileError || !profile) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    if (!user.githubAccessToken) {
+    if (!profile.github_access_token) {
       return NextResponse.json(
         {
           error:
@@ -54,8 +55,7 @@ export async function GET(request) {
       );
     }
 
-    // Fetch the user's commits for the specified date
-    const commits = await getDailyCommits(user.githubAccessToken, date);
+    const commits = await getDailyCommits(profile.github_access_token, date);
 
     return NextResponse.json(commits);
   } catch (error) {

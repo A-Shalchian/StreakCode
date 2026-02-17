@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/providers/AuthProvider";
 import { useRouter } from "next/navigation";
 import ContributionCalendar from "@/components/streak/ContributionCalendar";
@@ -8,6 +8,9 @@ import LoadingSpinner from "@/components/streak/LoadingSpinner";
 import ErrorMessage from "@/components/streak/ErrorMessage";
 import { toast } from "react-toastify";
 import { Trophy, Flame, GitBranch, Activity } from "lucide-react";
+
+const CACHE_KEY = "streakcode_contributions";
+const CACHE_TTL = 5 * 60 * 1000;
 
 interface ContributionDay {
   date: string;
@@ -28,12 +31,31 @@ interface ContributionsData {
   yesterdayContributionCount: number;
 }
 
+function getCachedContributions(): ContributionsData | null {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if (!raw) return null;
+    const { data, timestamp } = JSON.parse(raw);
+    if (Date.now() - timestamp > CACHE_TTL) return null;
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+function setCachedContributions(data: ContributionsData) {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ data, timestamp: Date.now() }));
+  } catch {}
+}
+
 export default function StreakPage() {
   const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
   const [contributions, setContributions] = useState<ContributionsData | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const hasFetched = useRef(false);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -42,13 +64,21 @@ export default function StreakPage() {
   }, [authLoading, user, router]);
 
   useEffect(() => {
-    if (!authLoading && user) {
-      fetchData();
+    if (!authLoading && user && !hasFetched.current) {
+      hasFetched.current = true;
+      const cached = getCachedContributions();
+      if (cached) {
+        setContributions(cached);
+        setIsLoading(false);
+      }
+      fetchData(!!cached);
     }
   }, [authLoading, user]);
 
-  const fetchData = async () => {
-    setIsLoading(true);
+  const fetchData = async (hasCache: boolean) => {
+    if (!hasCache) {
+      setIsLoading(true);
+    }
     setError(null);
 
     try {
@@ -60,9 +90,12 @@ export default function StreakPage() {
 
       const contribData = await contribResponse.json();
       setContributions(contribData);
+      setCachedContributions(contribData);
     } catch (err: any) {
-      setError(err.message);
-      toast.error(err.message);
+      if (!hasCache) {
+        setError(err.message);
+        toast.error(err.message);
+      }
     } finally {
       setIsLoading(false);
     }

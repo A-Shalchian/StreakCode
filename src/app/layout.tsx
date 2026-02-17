@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { AuthProvider } from "@/providers/AuthProvider";
 import { ThemeProvider } from "@/providers/ThemeProvider";
+import { FontProvider } from "@/providers/FontProvider";
 import "./globals.css";
 import { Navbar } from "@/homeSections/Navbar";
 import { Footer } from "@/homeSections/Footer";
@@ -22,6 +23,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={"antialiased"}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <FontProvider>
           <AuthProvider>
             <Navbar />
             {children}
@@ -39,6 +41,7 @@ export default function RootLayout({
             />
             <Footer />
           </AuthProvider>
+          </FontProvider>
         </ThemeProvider>
       </body>
     </html>

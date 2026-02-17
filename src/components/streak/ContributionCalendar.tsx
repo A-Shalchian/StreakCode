@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from "react";
 import DailyCommits from "@/components/github-commits/DailyCommits";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui";
-import { CONTRIBUTION_COLORS } from "@/constants/colors";
+import { CONTRIBUTION_COLORS, getContributionColor } from "@/constants/colors";
+import { CalendarDays } from "lucide-react";
 
 interface ContributionDay {
   date: string;
@@ -74,7 +75,12 @@ export default function ContributionCalendar({
     <>
       <Card>
         <CardHeader>
-          <CardTitle>Contribution Calendar</CardTitle>
+          <CardTitle>
+            <span className="flex items-center gap-2">
+              <CalendarDays size={22} />
+              Contribution Calendar
+            </span>
+          </CardTitle>
           <div className="flex flex-col sm:flex-row sm:space-x-4">
             <div className="flex items-center">
               <span className="text-sm text-gray-700 dark:text-gray-300 mr-2">
@@ -156,7 +162,7 @@ export default function ContributionCalendar({
                                 ? "ring-2 ring-indigo-500 ring-offset-1 dark:ring-offset-gray-800"
                                 : ""
                             }`}
-                            style={{ backgroundColor: day.color }}
+                            style={{ backgroundColor: getContributionColor(day.contributionCount, isDarkMode) }}
                             title={`${formattedDate}: ${
                               day.contributionCount
                             } contribution${

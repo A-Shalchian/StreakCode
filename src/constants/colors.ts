@@ -1,22 +1,20 @@
-// Contribution color scale
 export const CONTRIBUTION_COLORS = {
   light: {
-    level0: "#ebedf0", // No contributions
-    level1: "#a5b4fc", // indigo-300
-    level2: "#5C6BC0", // indigo-400
-    level3: "#303F9F", // indigo-700
-    level4: "#312e81", // indigo-900
+    level0: "#ebedf0",
+    level1: "#9be9a8",
+    level2: "#40c463",
+    level3: "#30a14e",
+    level4: "#216e39",
   },
   dark: {
-    level0: "#161b22", // No contributions
-    level1: "#0e4429", // Dark green level 1
-    level2: "#26a641", // Dark green level 2
-    level3: "#39d353", // Dark green level 3
-    level4: "#2ea043", // Dark green level 4
+    level0: "#161b22",
+    level1: "#0e4429",
+    level2: "#006d32",
+    level3: "#26a641",
+    level4: "#39d353",
   },
 };
 
-// Get color based on contribution count
 export function getContributionColor(
   count: number,
   isDarkMode: boolean = false
